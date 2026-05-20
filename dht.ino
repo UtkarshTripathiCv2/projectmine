@@ -1,27 +1,38 @@
-#include <SimpleDHT.h>
+#include "DHT.h"
 
-int pinDHT11 = 2; // Data pin connected to Pin 2
-SimpleDHT11 dht11(pinDHT11);
+#define DHTPIN 2     // Digital pin connected to the DHT sensor
+#define DHTTYPE DHT11 // Setting the sensor type as DHT11
+
+// Initialize DHT sensor
+DHT dht(DHTPIN, DHTTYPE);
 
 void setup() {
   Serial.begin(9600);
+  Serial.println("DHT11 Sensor Initialization...");
+  
+  dht.begin(); // Start the sensor
 }
 
 void loop() {
-  byte temperature = 0;
-  byte humidity = 0;
-  
-  // Read the raw bytes directly from the sensor
-  int err = dht11.read(&temperature, &humidity, NULL);
-  
-  if (err == SimpleDHTErrSuccess) {
-    Serial.print((int)temperature);
-    Serial.print(" C, ");
-    Serial.print((int)humidity);
-    Serial.println(" %");
-  } else {
-    Serial.println("Read failed");
+  // Wait 2 seconds between measurements (DHT11 is slow)
+  delay(2000);
+
+  // Read humidity (percentage)
+  float humidity = dht.readHumidity();
+  // Read temperature as Celsius (the default)
+  float temperature = dht.readTemperature();
+
+  // Check if any reads failed and exit early (to try again)
+  if (isnan(humidity) || isnan(temperature)) {
+    Serial.println("Failed to read from DHT sensor!");
+    return;
   }
-  
-  delay(1500); // Small delay before next sample
+
+  // Print the values to the Serial Monitor
+  Serial.print("Humidity: ");
+  Serial.print(humidity);
+  Serial.print("%  |  ");
+  Serial.print("Temperature: ");
+  Serial.print(temperature);
+  Serial.println("°C");
 }
