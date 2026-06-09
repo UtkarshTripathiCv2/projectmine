@@ -3,19 +3,22 @@
 #include <DabbleESP32.h>
 
 // --- Right Motor Pins ---
-const int enableRightMotor = 22; 
+const int enableRightMotor = 25; 
 const int rightMotorPin1 = 16;
 const int rightMotorPin2 = 17;
 
 // --- Left Motor Pins ---
-const int enableLeftMotor = 23;
+const int enableLeftMotor = 26;
 const int leftMotorPin1 = 18;
 const int leftMotorPin2 = 19;
 
-// --- PWM Speed Settings ---
-#define MAX_MOTOR_SPEED 255
-const int PWMFreq = 1000;      // 1 KHz frequency
-const int PWMResolution = 8;   // 8-bit resolution (0-255)
+#define MAX_MOTOR_SPEED 100
+
+// --- PWM Settings (Required for Core 2.x) ---
+const int PWMFreq = 1000;
+const int PWMResolution = 8;
+const int rightMotorChannel = 4;
+const int leftMotorChannel = 5;
 
 void rotateMotor(int rightMotorSpeed, int leftMotorSpeed) {
   // --- Right Motor Direction ---
@@ -42,30 +45,30 @@ void rotateMotor(int rightMotorSpeed, int leftMotorSpeed) {
     digitalWrite(leftMotorPin2, LOW);      
   }
   
-  // --- Apply Speed ---
-  // UPDATED SYNTAX: We now write the speed directly to the enable pin!
-  ledcWrite(enableRightMotor, abs(rightMotorSpeed));
-  ledcWrite(enableLeftMotor, abs(leftMotorSpeed));  
+  // --- Apply Speed to PWM Channels ---
+  ledcWrite(rightMotorChannel, abs(rightMotorSpeed));
+  ledcWrite(leftMotorChannel, abs(leftMotorSpeed));  
 }
 
-void setUpPinModes() {
+void setup() {
   // Set direction pins as standard outputs
   pinMode(rightMotorPin1, OUTPUT);
   pinMode(rightMotorPin2, OUTPUT);
   pinMode(leftMotorPin1, OUTPUT);
   pinMode(leftMotorPin2, OUTPUT);
 
-  // --- Setup PWM for Speed ---
-  // UPDATED SYNTAX: Attach frequency and resolution directly to the enable pins.
-  ledcAttach(enableRightMotor, PWMFreq, PWMResolution);
-  ledcAttach(enableLeftMotor, PWMFreq, PWMResolution); 
+  // --- Setup PWM Channels ---
+  ledcSetup(rightMotorChannel, PWMFreq, PWMResolution);
+  ledcSetup(leftMotorChannel, PWMFreq, PWMResolution);
+  
+  // --- Attach enable pins to the channels ---
+  ledcAttachPin(enableRightMotor, rightMotorChannel);
+  ledcAttachPin(enableLeftMotor, leftMotorChannel);
 
   // Ensure motors are stopped on startup
   rotateMotor(0, 0); 
-}
-
-void setup() {
-  setUpPinModes();
+  
+  // Start Bluetooth connection
   Dabble.begin("MyBluetoothCar"); 
 }
 
