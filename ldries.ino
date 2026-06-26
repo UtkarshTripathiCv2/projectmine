@@ -1,3 +1,46 @@
+// 1. Microcontroller (Arduino Uno/Nano)
+
+// Provides the logic and power distribution.
+
+// 2. LDR (Light Sensor) - Day/Night Detection
+
+// VCC: Connect to 5V.
+
+// GND: Connect to GND through a 10kΩ resistor.
+
+// Signal: Connect the junction between the LDR and the 10kΩ resistor to A0.
+
+// 3. IR Sensors (Motion & Speed)
+
+// IR 1 (Start Timer): VCC to 5V, GND to GND, OUT to Digital Pin 2.
+
+// IR 2 (Stop Timer): VCC to 5V, GND to GND, OUT to Digital Pin 3.
+
+// Note: Place them exactly 40 cm apart.
+
+// 4. DHT11 (Temperature & Humidity)
+
+// VCC: to 5V.
+
+// GND: to GND.
+
+// DATA: to Digital Pin 4.
+
+// 5. LED Array (Street Light)
+
+// Positive (Anode): Connect to Digital Pin 5 (PWM pin) via a 220Ω resistor.
+
+// Negative (Cathode): Connect to GND.
+
+// 6. 16x2 I2C LCD Display
+
+// VCC: to 5V.
+
+// GND: to GND.
+
+// SDA: to A4 (or dedicated SDA pin).
+
+// SCL: to A5 (or dedicated SCL pin).
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <DHT.h>
